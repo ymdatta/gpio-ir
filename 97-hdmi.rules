@@ -1,0 +1,1 @@
+ACTION=="change", SUBSYSTEM=="hdmi", RUN+="/bin/sh /home/pi/at.sh"

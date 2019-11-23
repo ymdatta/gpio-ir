@@ -13,6 +13,7 @@ PWD   := $(shell pwd)
 default:
 	make -C $(KDIR) M=$(PWD) modules
 	make clean
+	-cp ./scripts/at.sh /home/pi/
 	-cp 97-hdmi.rules /etc/udev/rules.d/
 	-udevadm control --reload
 clean:

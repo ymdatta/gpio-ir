@@ -133,14 +133,13 @@ static void timer_init_func (void) {
 
 static int __init hdmi_rpi_init(void)
 {
-	int ret = 0;
 	pr_info ("loading ... \n");
 	rpi_fw = rpi_firmware_get (NULL);
 
 
 	// Check whether the given GPIO is valid
 	if(!gpio_is_valid(HDMI_GPIO_MAGIC)) {
-		printk("GPIO %s is not valid\n", HDMI_GPIO_MAGIC);
+		printk("GPIO %d is not valid\n", HDMI_GPIO_MAGIC);
 		return -1;
 	}
 	

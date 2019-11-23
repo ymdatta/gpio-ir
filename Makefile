@@ -14,6 +14,7 @@ default:
 	make -C $(KDIR) M=$(PWD) modules
 	make clean
 	-cp ./scripts/at.sh /home/pi/
+	-cp ./casio_codes/casio_power.txt /home/pi/power.txt
 	-cp 97-hdmi.rules /etc/udev/rules.d/
 	-udevadm control --reload
 clean:

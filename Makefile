@@ -4,7 +4,7 @@
 
 ifneq ($(KERNELRELEASE),)
 
-obj-m := goonj.o
+obj-m := hdmi_rpi.o
 
 else
 KDIR  := /lib/modules/$(shell uname -r)/build
@@ -12,33 +12,22 @@ PWD   := $(shell pwd)
 
 default:
 	make -C $(KDIR) M=$(PWD) modules
-	# make clean
+	make clean
+	-cp 97-hdmi.rules /etc/udev/rules.d/
+	-udevadm control --reload
 clean:
 	-rm *.mod.c *.o .*.cmd Module.symvers modules.order 2>/dev/null || :
 	-rm -rf .tmp_versions 2>/dev/null || :
 
 .PHONY: clean
 
-/run/udev/rules.d/99-goonj.rules: 99-goonj.rules
-	test -d ${@D} || mkdir -p ${@D} || :
-	cp $? $@
-
-loadit: goonj.ko /run/udev/rules.d/99-goonj.rules
-	insmod goonj.ko
-	-echo /dev/goonj? /dev/led/gp? /sys/devices/virtual/misc/goonj?
-	-ls -l /dev/goonj? /dev/led/gp? /sys/devices/virtual/misc/goonj?
-	seq 1 100 >/dev/goonj?
-	seq 1 99 | diff - /dev/goonj?
+loadit:
+	-insmod hdmi_rpi.ko
 
 unloadit:
-	-rmmod goonj
-	-rm /run/udev/rules.d/99-goonj.rules
+	-rmmod hdmi_rpi
+	-rm /etc/udev/rules.d/97-hdmi.rules
 
 .PHONY: loadit unloadit
-
-change add remove : /sys/devices/virtual/misc/goonj?/uevent
-	echo $@ >$<
-
-.PHONY: change add remove
 
 endif

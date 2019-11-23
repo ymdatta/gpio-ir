@@ -28,8 +28,7 @@ typedef unsigned char uint8;
 
 static void hdmi_release(struct device *dev);
 							       
-char *envp_attach[] = {"ATTACHED=1", NULL};
-char *envp_detach[] = {"SUBSYSTEM=hdmi", NULL};
+char *envp[] = {"SUBSYSTEM=hdmi", NULL};
 
 struct edid_response {
 	uint32 block_number;
@@ -106,31 +105,12 @@ void raspi_callback(struct work_struct *a) {
 			state = 1;
 	} else { // HDMI Unplugged
 		if(state != 0) {
-			kobject_uevent_env(&(hrpi.dev.kobj), KOBJ_CHANGE, envp_detach);
+			kobject_uevent_env(&(hrpi.dev.kobj), KOBJ_CHANGE, envp);
 			printk ("HDMI Unplugged\n");
 			state = 0;
 		}
 	}
 }
-				
-	
-/* 	if(gpio_val == 1) { //HDMI unplugged */
-/* 		if (state == 1) { */
-/* 			// ON->OFF */
-/* 			state = 0; */
-/* 			kobject_uevent_env(&(hrpi.dev.kobj), KOBJ_CHANGE, envp_detach); */
-/* 			printk ("HDMI Unplugged\n"); */
-/* 		} */
-/* 	} else { // HDMI plugged */
-/* 		if (state == 0) { */
-/* 			// OFF->ON */
-/* 			state = 1; */
-/* 			kobject_uevent_env(&(hrpi.dev.kobj), KOBJ_CHANGE, envp_detach); */
-/* 			printk ("HDMI Plugged\n"); */
-/* 		} */
-/* 	} */
-/* } */
-
 
 void timer_callback (struct timer_list * tl) {
 	printk ("In %s\n", __func__);
@@ -151,7 +131,7 @@ static void timer_init_func (void) {
 	add_timer (&tlist);
 }
 
-static int __init goonj_init(void)
+static int __init hdmi_rpi_init(void)
 {
 	int ret = 0;
 	pr_info ("loading ... \n");
@@ -180,7 +160,7 @@ static void timer_exit_func (void) {
 	del_timer_sync (&tlist);
 }
 
-static void __exit goonj_exit(void)
+static void __exit hdmi_rpi_exit(void)
 {
 	kfree(ws);
 	timer_exit_func ();  
@@ -191,6 +171,6 @@ static void __exit goonj_exit(void)
 	hdmi_unregister_device(&hrpi);
 }
 
-module_init(goonj_init);
-module_exit(goonj_exit);
+module_init(hdmi_rpi_init);
+module_exit(hdmi_rpi_exit);
 
